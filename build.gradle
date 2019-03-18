@@ -1,0 +1,62 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
+}
+
+apply plugin: 'java'
+
+// for fat jar
+apply plugin: 'com.github.johnrengelman.shadow'
+
+group 'com.jaguth'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    // It seems that all 4 spigot private maven repos are required to download all spigot-api dependencies. Its a community-run
+    // solution and various required dependencies seem to be spread out to the various repos.
+    maven {
+        url 'https://hub.spigotmc.org/nexus/content/repositories/releases/'
+    }
+    maven {
+        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        url 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+    maven {
+        url 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+}
+
+dependencies {
+    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compile 'com.amazonaws:aws-java-sdk-ec2:1.11.505'
+    compile 'com.amazonaws:aws-java-sdk-sts:1.11.505'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.+'
+    testCompile 'org.powermock:powermock-module-junit4:2.0.0'//
+    testCompile 'org.powermock:powermock-api-mockito2:2.0.0'
+}
+
+// convenience methods for myself
+task deleteFromSpigotServer(type: Delete) {
+    delete "../plugins/spigotpluggin.awsmgr-1.0-all.jar"
+    followSymlinks = true
+}
+deleteFromSpigotServer.group = 'custombuild'
+deleteFromSpigotServer.dependsOn shadowJar
+
+task buildAndCopyToSpigotServer(type: Copy) {
+    from file("$buildDir/libs/spigotpluggin.awsmgr-1.0-all.jar")
+    into file("../plugins")
+}
+buildAndCopyToSpigotServer.dependsOn deleteFromSpigotServer
+buildAndCopyToSpigotServer.group = 'custombuild'

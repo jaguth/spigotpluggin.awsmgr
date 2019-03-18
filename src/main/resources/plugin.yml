@@ -1,0 +1,17 @@
+name: AwsMgr
+author: jaguth
+description: AWS management utility for Minecraft
+version: 1.0
+main: com.jaguth.spigotpluggin.awsmgr.AwsMgrPluggin
+commands:
+  ec2:
+    description: Fetch a group of EC2 instances as Minecraft animals and 'manage' them
+    usage: >
+      Usage: /EC2 fetch <contained_instance_name> <entity_type>
+      /EC2 clear
+      /EC2 info
+      /EC2 mode
+      /EC2 region <region>
+  spawn:
+    description: Test entity spawner
+    usage: "Usage: /SPAWN <entity_name> <(optional) count>"
