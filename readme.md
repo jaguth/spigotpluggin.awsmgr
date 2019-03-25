@@ -63,6 +63,3 @@ The following animal entities are currently supported for EC2. Other animal enti
 
 ### Collaboration
 Other users can join the server and also commands. This is built to be multiplayer, just like Minecraft!
-
-### This Load of Rubbish is Brought to you by: The Ministry of Stupid AWS Utilities
-![Ministry of Stupid AWS Utilities](crest.png "Ministry of Stupid AWS Utilities")
