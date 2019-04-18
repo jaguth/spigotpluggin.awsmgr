@@ -1,7 +1,8 @@
 # Minecraft AWS Manager
-Oh hello there! I wasn't expecting any company during Brekkie. No no, its a pleasure to have you and you are most welcome to stay!  And spot-on timing too since i've just cleaned the last of my baked beans and ham.  I have an extra Eccles cake, would you like it?  I'm most please to share.  You may need a few extra calories in your noggin if yu'r going to try and wrap your head around this new peculiar utility I wrote.
+Manage AWS resources in Minecraft!
 
 ## So What Is It?
+![So What Is It?](readme_resources/cat_so_what_is_it.jpg "So What Is It?")
 This thing I wrote combines Minecraft and AWS together in ways that boggles the mind.  Well, I provide a list of commands and their output, so that in itself isn't too boggling.  But what to do with it?  Thats the question.  It seems that every tool has its use, so perhaps you might find something useful after all.
 
 ## How Do I Get This Working?
@@ -60,6 +61,8 @@ The following animal entities are currently supported for EC2. Other animal enti
 - Sheep
 - Turtle
 - Wolf
+
+Supplying "random" will choose an animal at random.
 
 ### Collaboration
 Other users can join the server and also commands. This is built to be multiplayer, just like Minecraft!
