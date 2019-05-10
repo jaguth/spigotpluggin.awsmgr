@@ -15,6 +15,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -811,6 +812,38 @@ public class TestAnimal implements Animals {
 
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector velocity) {
+        return null;
+    }
+
+    @Override
+    public void setLoveModeTicks(int ticks) { return; }
+
+    @Override
+    public int getLoveModeTicks() { return 0; }
+
+    @Override
+    public boolean isLoveMode() {
+        return false;
+    }
+
+    @Override
+    public boolean isSleeping() {
+        return false;
+    }
+
+    @SuppressWarnings( "deprecation" )
+    @Override
+    public void setRotation(float yaw, float pitch) {
+
+    }
+
+    @Override
+    public Pose getPose() {
+        return null;
+    }
+
+    @Override
+    public PersistentDataContainer getPersistentDataContainer() {
         return null;
     }
 }

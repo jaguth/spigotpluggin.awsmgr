@@ -2,8 +2,7 @@
 Manage AWS resources in Minecraft!
 
 ## So What Is It?
-![So What Is It?](readme_resources/cat_so_what_is_it.jpg "So What Is It?")
-This thing I wrote combines Minecraft and AWS together in ways that boggles the mind.  Well, I provide a list of commands and their output, so that in itself isn't too boggling.  But what to do with it?  Thats the question.  It seems that every tool has its use, so perhaps you might find something useful after all.
+Right now, its pretty much a virtual death simulator for EC2 instances. Toy with their lives!
 
 ## How Do I Get This Working?
 [Read dev_setup.md to get started](./dev_setup.md)

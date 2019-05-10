@@ -13,30 +13,24 @@ apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'com.jaguth'
-version '1.0'
+version '1.1'
 
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    // It seems that all 4 spigot private maven repos are required to download all spigot-api dependencies. Its a community-run
-    // solution and various required dependencies seem to be spread out to the various repos.
-    maven {
-        url 'https://hub.spigotmc.org/nexus/content/repositories/releases/'
-    }
+
     maven {
         url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
     maven {
-        url 'https://hub.spigotmc.org/nexus/content/groups/public/'
-    }
-    maven {
-        url 'https://hub.spigotmc.org/nexus/content/groups/public/'
+        url 'https://hub.spigotmc.org/nexus/content/groups/public/' // dependencies required by org.spigotmc:spigot-api:1.14-R0.1-SNAPSHOT
     }
 }
 
 dependencies {
-    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compile 'org.spigotmc:spigot-api:1.14-R0.1-SNAPSHOT' // from https://hub.spigotmc.org/nexus/content/repositories/snapshots/
+
     compile 'com.amazonaws:aws-java-sdk-ec2:1.11.505'
     compile 'com.amazonaws:aws-java-sdk-sts:1.11.505'
 
