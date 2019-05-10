@@ -247,7 +247,7 @@ public class AwsMgr {
             }
 
             String tagText = AwsUtil.getTagText(instance);
-            Map.Entry<String, Player> playerEntry = playerMap.entrySet().iterator().next(); // doesn't really matter what player to use, just use one at random
+            Map.Entry<String, Player> playerEntry = playerMap.entrySet().iterator().next(); // doesn't really matter what player to use, just use first player
             Player player = playerEntry.getValue();
 
             Entity entity = MinecraftUtil.spawnEntityFromText("random", tagText, player);
@@ -396,5 +396,13 @@ public class AwsMgr {
         catch (Exception e) {
             throw new Exception("Region " + regionName + " not found");
         }
+    }
+
+    public void addSQSReceiverToWorld(String queueName) {
+
+    }
+
+    public void addSQSSenderToWorld(String queueName) {
+
     }
 }

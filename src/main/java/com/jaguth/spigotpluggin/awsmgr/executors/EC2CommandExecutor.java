@@ -20,7 +20,6 @@ public class EC2CommandExecutor implements CommandExecutor {
             return false;
         }
 
-        // /EC2 manage
         // /EC2 [arg0] [arg1] [arg2]
         String subCommand = args[0];
 

@@ -9,7 +9,7 @@ import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest;
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityResult;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import com.amazonaws.services.sqs.model.ListQueuesResult;
+import com.amazonaws.services.sqs.model.*;
 import com.jaguth.spigotpluggin.awsmgr.AwsUtil;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -96,12 +96,75 @@ public class AwsUtilExploratoryTests {
     }
 
     @Test
-    public void testSQS() {
+    public void testSQSListQueues() {
         AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+
         ListQueuesResult listQueuesResult = sqs.listQueues();
 
         for (final String queueUrl : listQueuesResult.getQueueUrls()) {
-            System.out.println("  QueueUrl: " + queueUrl);
+            System.out.println("QueueUrl: " + queueUrl);
         }
+    }
+
+    @Test
+    public void testSQSGetQueueUrl() {
+        AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+
+        String queueName = "TestQueueA";
+        String queueUrl = sqs.getQueueUrl(queueName).getQueueUrl();
+
+        System.out.println("QueueUrl: " + queueUrl);
+    }
+
+    @Test
+    public void testSQSSendMessage() {
+        AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+
+        String queueName = "TestQueueA";
+        String queueUrl = sqs.getQueueUrl(queueName).getQueueUrl();
+
+        SendMessageResult sendMessageResult = sqs.sendMessage(queueUrl, "{ \"hello\": \"world\" }"); // default will dedupe message before put into queue
+
+        System.out.println("Sent Message ID: " + sendMessageResult.getMessageId());
+    }
+
+    @Test
+    public void testSQSReceiveMessage() {
+        AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+
+        String queueName = "TestQueueA";
+        String queueUrl = sqs.getQueueUrl(queueName).getQueueUrl();
+
+        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest();
+        receiveMessageRequest.setQueueUrl(queueUrl);
+        receiveMessageRequest.setMaxNumberOfMessages(10);
+
+        ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(receiveMessageRequest); // receive up to max number messages set
+        //ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(queueUrl); // default is receive 1 message from queue
+
+        int messageNumber = 1;
+
+        System.out.println("Messages received: " + receiveMessageResult.getMessages().size());
+
+        for (Message message : receiveMessageResult.getMessages()) {
+            System.out.println("Message #" + messageNumber + ": " + message.getBody());
+            messageNumber++;
+        }
+    }
+
+    @Test
+    public void testSQSDeleteSingleMessage() {
+        AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+
+        String queueName = "TestQueueA";
+        String queueUrl = sqs.getQueueUrl(queueName).getQueueUrl();
+
+        ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(queueUrl);
+        String receiptHandle = receiveMessageResult.getMessages().iterator().next().getReceiptHandle(); // get receipt handle of first message
+
+        System.out.println("Message to delete via receipt handle: " + receiptHandle);
+
+        DeleteMessageResult deleteMessageResult = sqs.deleteMessage(queueUrl, receiptHandle);
+        System.out.println("Delete message result: " + deleteMessageResult.toString());
     }
 }

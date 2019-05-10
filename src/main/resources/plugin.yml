@@ -12,6 +12,10 @@ commands:
       /EC2 info
       /EC2 mode
       /EC2 region <region>
+  sqs:
+    description: SQS Receive Spawner and SQS Sender Reverse-Spawner
+    usage: >
+      Usage: /SQS [receiver|sender] <sqs_name>
   spawn:
     description: Test entity spawner
     usage: "Usage: /SPAWN <entity_name> <(optional) count>"
