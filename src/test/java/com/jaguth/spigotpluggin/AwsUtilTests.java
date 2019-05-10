@@ -45,7 +45,7 @@ public class AwsUtilTests {
 
     @Test
     public void testGetInstances() {
-        List<String> tagNames = Lists.newArrayList("sociallinks");
+        List<String> tagNames = Lists.newArrayList("myNameTag");
         List<Instance> instances = AwsUtil.getEC2Instances(tagNames, Regions.US_EAST_1);
         Assert.assertTrue(instances.size() > 0);
     }

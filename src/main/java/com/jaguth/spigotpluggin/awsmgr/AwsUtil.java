@@ -148,4 +148,8 @@ public class AwsUtil {
 
         return result.getAccount();
     }
+
+    public static void getblah() {
+
+    }
 }

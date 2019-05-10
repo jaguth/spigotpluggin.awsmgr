@@ -7,6 +7,9 @@ import com.amazonaws.services.ec2.model.*;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClient;
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest;
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityResult;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.jaguth.spigotpluggin.awsmgr.AwsUtil;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -90,5 +93,15 @@ public class AwsUtilExploratoryTests {
         GetCallerIdentityRequest request = new GetCallerIdentityRequest();
         GetCallerIdentityResult result = client.getCallerIdentity(request);
         System.out.println(result.getAccount());
+    }
+
+    @Test
+    public void testSQS() {
+        AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+        ListQueuesResult listQueuesResult = sqs.listQueues();
+
+        for (final String queueUrl : listQueuesResult.getQueueUrls()) {
+            System.out.println("  QueueUrl: " + queueUrl);
+        }
     }
 }
