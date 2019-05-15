@@ -1,7 +1,8 @@
 name: AwsMgr
 author: jaguth
 description: AWS management utility for Minecraft
-version: 1.0
+version: "1.1"
+api-version: "1.14"
 main: com.jaguth.spigotpluggin.awsmgr.AwsMgrPluggin
 commands:
   ec2:

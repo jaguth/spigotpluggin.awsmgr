@@ -19,7 +19,6 @@ public class SQSCommandExecutor implements CommandExecutor {
         if (args.length == 0) {
             return false;
         }
-
         // /SQS [arg0] [arg1] [arg2]
         String subCommand = args[0];
 
@@ -41,7 +40,7 @@ public class SQSCommandExecutor implements CommandExecutor {
         String queueName = args[1];
 
         try {
-            awsMgr.addSQSReceiverToWorld(queueName);
+            awsMgr.addSQSReceiverToWorld(sender.getName(), queueName);
         }
         catch (Exception e) {
             sender.sendMessage("Failed to add SQS receiver queue \"" + queueName + "\" to world: " + e.toString());
@@ -59,7 +58,7 @@ public class SQSCommandExecutor implements CommandExecutor {
         String queueName = args[1];
 
         try {
-            awsMgr.addSQSSenderToWorld(queueName);
+            awsMgr.addSQSSenderToWorld(sender.getName(), queueName);
         }
         catch (Exception e) {
             sender.sendMessage("Failed to add SQS sender queue \"" + queueName + "\" to world: " + e.toString());

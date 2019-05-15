@@ -1,9 +1,9 @@
 package com.jaguth.spigotpluggin.awsmgr;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.*;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -63,5 +63,66 @@ public class MinecraftUtil {
 
     private static int generateRandomInt(int minRange, int maxRange) {
         return ThreadLocalRandom.current().nextInt(minRange, maxRange);
+    }
+
+    public static Block spawnBlockWherePlayerLooking(Player player) {
+        final int maxRange = 100;
+        World world = player.getWorld();
+
+        Block targetBlock = player.getTargetBlock(null, maxRange);
+        Block highestBlock = world.getHighestBlockAt(targetBlock.getX(), targetBlock.getZ());
+        highestBlock.setType(Material.DIRT);
+
+        return highestBlock;
+    }
+
+    public static Block spawnSignWherePlayerLooking(Player player) {
+        final int maxRange = 100;
+        World world = player.getWorld();
+
+        Block targetBlock = player.getTargetBlock(null, maxRange);
+        Block highestBlock = world.getHighestBlockAt(targetBlock.getX(), targetBlock.getZ());
+        highestBlock.setType(Material.OAK_SIGN);
+
+        Sign sign = (Sign) highestBlock.getState();
+        sign.setLine(0, "test");
+
+        sign.update();
+
+        return highestBlock;
+    }
+
+    public static BlockFace getPlayerDirection(Player player) {
+        BlockFace dir = null;
+
+        float y = player.getLocation().getYaw();
+
+        if( y < 0 ) {
+            y += 360;
+        }
+
+        y %= 360;
+
+        int i = (int)((y+8) / 22.5);
+
+        if (i == 0) {dir = BlockFace.WEST;}
+        else if (i == 1) { dir = BlockFace.WEST_NORTH_WEST;}
+        else if (i == 2) { dir = BlockFace.NORTH_WEST;}
+        else if (i == 3) { dir = BlockFace.NORTH_NORTH_WEST;}
+        else if (i == 4) { dir = BlockFace.NORTH;}
+        else if (i == 5) { dir = BlockFace.NORTH_NORTH_EAST;}
+        else if (i == 6) { dir = BlockFace.NORTH_EAST;}
+        else if (i == 7) { dir = BlockFace.EAST_NORTH_EAST;}
+        else if (i == 8) { dir = BlockFace.EAST;}
+        else if (i == 9) { dir = BlockFace.EAST_SOUTH_EAST;}
+        else if (i == 10 ){ dir = BlockFace.SOUTH_EAST;}
+        else if (i == 11 ){ dir = BlockFace.SOUTH_SOUTH_EAST;}
+        else if (i == 12 ){ dir = BlockFace.SOUTH;}
+        else if (i == 13 ){ dir = BlockFace.SOUTH_SOUTH_WEST;}
+        else if (i == 14 ){ dir = BlockFace.SOUTH_WEST;}
+        else if (i == 15 ){ dir = BlockFace.WEST_SOUTH_WEST;}
+        else {dir = BlockFace.WEST;}
+
+        return dir;
     }
 }

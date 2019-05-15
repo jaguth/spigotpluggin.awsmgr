@@ -5,6 +5,7 @@ import com.amazonaws.services.ec2.model.Instance;
 import com.jaguth.spigotpluggin.awsmgr.domain.AwsAvatar;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 import static com.jaguth.spigotpluggin.awsmgr.AwsUtil.isEC2InstanceRunning;
+import static org.bukkit.Bukkit.getName;
 
 public class AwsMgr {
     private AwsMgrPluggin awsMgrPluggin;
@@ -398,11 +400,18 @@ public class AwsMgr {
         }
     }
 
-    public void addSQSReceiverToWorld(String queueName) {
-
+    public void addSQSReceiverToWorld(String playerName, String queueName) {
+        MinecraftUtil.spawnSignWherePlayerLooking(findPlayerInWorld(playerName));
     }
 
-    public void addSQSSenderToWorld(String queueName) {
+    public void addSQSSenderToWorld(String playerName, String queueName) {
+        MinecraftUtil.spawnSignWherePlayerLooking(findPlayerInWorld(playerName));
+    }
 
+    private Player findPlayerInWorld(String playerName) {
+        World world = awsMgrPluggin.getServer().getWorlds().get(0); // hacky. hopefully server is running only 1 world
+        Player player = world.getPlayers().stream().filter(x -> x.getName().equals(playerName)).findFirst().get();
+
+        return player;
     }
 }

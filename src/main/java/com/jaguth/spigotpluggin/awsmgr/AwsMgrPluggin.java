@@ -1,6 +1,7 @@
 package com.jaguth.spigotpluggin.awsmgr;
 
 import com.jaguth.spigotpluggin.awsmgr.executors.EC2CommandExecutor;
+import com.jaguth.spigotpluggin.awsmgr.executors.SQSCommandExecutor;
 import com.jaguth.spigotpluggin.awsmgr.executors.SpawnCommandExecutor;
 import com.jaguth.spigotpluggin.awsmgr.listeners.PlayerListener;
 import com.jaguth.spigotpluggin.awsmgr.runnables.AwsRunnable;
@@ -16,6 +17,7 @@ public class AwsMgrPluggin extends JavaPlugin {
         AwsMgr awsMgr = new AwsMgr(this);
 
         this.getCommand("ec2").setExecutor(new EC2CommandExecutor(awsMgr));
+        this.getCommand("sqs").setExecutor(new SQSCommandExecutor(awsMgr));
         this.getCommand("spawn").setExecutor(new SpawnCommandExecutor(awsMgr));
         getServer().getPluginManager().registerEvents(new PlayerListener(awsMgr), this);
 
