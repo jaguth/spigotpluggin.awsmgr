@@ -1688,6 +1688,11 @@ public class TestPlayer implements Player {
     }
 
     @Override
+    public void openBook(ItemStack book) {
+
+    }
+
+    @Override
     public <T> T getMemory(MemoryKey<T> memoryKey) {
         return null;
     }
