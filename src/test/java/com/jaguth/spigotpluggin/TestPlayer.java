@@ -12,6 +12,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.entity.*;
+import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.*;
@@ -1684,5 +1685,20 @@ public class TestPlayer implements Player {
     @Override
     public PersistentDataContainer getPersistentDataContainer() {
         return null;
+    }
+
+    @Override
+    public void openBook(ItemStack book) {
+
+    }
+
+    @Override
+    public <T> T getMemory(MemoryKey<T> memoryKey) {
+        return null;
+    }
+
+    @Override
+    public <T> void setMemory(MemoryKey<T> memoryKey, T memoryValue) {
+
     }
 }
