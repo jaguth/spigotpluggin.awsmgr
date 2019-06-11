@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 import static com.jaguth.spigotpluggin.awsmgr.AwsUtil.isEC2InstanceRunning;
-import static org.bukkit.Bukkit.getName;
 
 public class AwsMgr {
     private AwsMgrPluggin awsMgrPluggin;
@@ -400,11 +399,11 @@ public class AwsMgr {
         }
     }
 
-    public void addSQSReceiverToWorld(String playerName, String queueName) {
+    public void addSQSReceiverToWorld(String playerName, String queueName, String entityType) {
         MinecraftUtil.spawnSignWherePlayerLooking(findPlayerInWorld(playerName));
     }
 
-    public void addSQSSenderToWorld(String playerName, String queueName) {
+    public void addSQSSenderToWorld(String playerName, String queueName, String entityType) {
         MinecraftUtil.spawnSignWherePlayerLooking(findPlayerInWorld(playerName));
     }
 

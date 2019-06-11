@@ -16,7 +16,7 @@ commands:
   sqs:
     description: SQS Receive Spawner and SQS Sender Reverse-Spawner
     usage: >
-      Usage: /SQS [receiver|sender] <sqs_name>
+      Usage: /SQS [receiver|sender] <sqs_name> <entity_type>
   spawn:
     description: Test entity spawner
     usage: "Usage: /SPAWN <entity_name> <(optional) count>"

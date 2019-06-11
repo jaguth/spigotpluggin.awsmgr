@@ -1,8 +1,6 @@
 package com.jaguth.spigotpluggin.awsmgr.executors;
 
 import com.jaguth.spigotpluggin.awsmgr.AwsMgr;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,14 +31,15 @@ public class SQSCommandExecutor implements CommandExecutor {
     }
 
     private boolean handleReceiverCommand(CommandSender sender, String[] args) {
-        if (args.length < 2) {
+        if (args.length < 3) {
             return false;
         }
 
         String queueName = args[1];
+        String entityType = args[2];
 
         try {
-            awsMgr.addSQSReceiverToWorld(sender.getName(), queueName);
+            awsMgr.addSQSReceiverToWorld(sender.getName(), queueName, entityType);
         }
         catch (Exception e) {
             sender.sendMessage("Failed to add SQS receiver queue \"" + queueName + "\" to world: " + e.toString());
@@ -51,14 +50,15 @@ public class SQSCommandExecutor implements CommandExecutor {
     }
 
     private boolean handleSenderCommand(CommandSender sender, String[] args) {
-        if (args.length < 2) {
+        if (args.length < 3) {
             return false;
         }
 
         String queueName = args[1];
+        String entityType = args[2];
 
         try {
-            awsMgr.addSQSSenderToWorld(sender.getName(), queueName);
+            awsMgr.addSQSSenderToWorld(sender.getName(), queueName, entityType);
         }
         catch (Exception e) {
             sender.sendMessage("Failed to add SQS sender queue \"" + queueName + "\" to world: " + e.toString());
