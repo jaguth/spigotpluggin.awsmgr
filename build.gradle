@@ -7,6 +7,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "de.undercouch.download" version "3.4.3"
+}
+
 apply plugin: 'java'
 
 // for fat jar
@@ -36,21 +40,44 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.+'
-    testCompile 'org.powermock:powermock-module-junit4:2.0.0'//
+    testCompile 'org.powermock:powermock-module-junit4:2.0.0'
     testCompile 'org.powermock:powermock-api-mockito2:2.0.0'
 }
 
-// convenience methods for myself
+def BUILDTOOLS_VERSION = "1.14.2"
+def BUILDTOOLS_DIR = "$projectDir/buildtools"
+def PLUGINS_DIR = "$BUILDTOOLS_DIR/plugins"
+def PLUGIN_NAME = "spigotpluggin.awsmgr-$version-all.jar"
+
 task deleteFromSpigotServer(type: Delete) {
-    delete "../plugins/spigotpluggin.awsmgr-1.0-all.jar"
+    delete "$PLUGINS_DIR/$PLUGIN_NAME"
     followSymlinks = true
 }
-deleteFromSpigotServer.group = 'custombuild'
 deleteFromSpigotServer.dependsOn shadowJar
 
-task buildAndCopyToSpigotServer(type: Copy) {
-    from file("$buildDir/libs/spigotpluggin.awsmgr-1.0-all.jar")
-    into file("../plugins")
+task copyToSpigotServer(type: Copy) {
+    from file("$buildDir/libs/$PLUGIN_NAME")
+    into file("$PLUGINS_DIR")
 }
-buildAndCopyToSpigotServer.dependsOn deleteFromSpigotServer
-buildAndCopyToSpigotServer.group = 'custombuild'
+copyToSpigotServer.dependsOn deleteFromSpigotServer
+
+task downloadBuildTools(group: 'spigot', type: Download) {
+    src 'https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar'
+    dest "buildtools/BuildTools.jar"
+}
+
+task createStartSpigotScript (group: 'spigot') {
+    File startSpigotBatchFile = new File("$BUILDTOOLS_DIR/startSpigot.cmd")
+
+    if (!startSpigotBatchFile.exists()) {
+        def command = "java -Xms512M -Xmx1G -XX:+UseConcMarkSweepGC -jar spigot-1.14.2.jar"
+        startSpigotBatchFile.write command
+    }
+}
+
+task buildThePlugin () {}
+buildThePlugin.dependsOn shadowJar, clean
+
+task installThePlugin (group: 'spigot') {}
+installThePlugin.dependsOn deleteFromSpigotServer, copyToSpigotServer, buildThePlugin
+
