@@ -27,11 +27,11 @@ public class EC2CommandExecutor implements CommandExecutor {
             case "fetch":
                 return handleFetchCommand(sender, args);
             case "clear":
-                return handleClearCommand(sender, args);
+                return handleClearCommand(sender);
             case "info":
-                return handleInfoCommand(sender, args);
+                return handleInfoCommand(sender);
             case "mode":
-                return handleModeCommand(sender, args);
+                return handleModeCommand(sender);
             case "region":
                 return handleRegionCommand(sender, args);
             default:
@@ -60,7 +60,7 @@ public class EC2CommandExecutor implements CommandExecutor {
         return true;
     }
 
-    private boolean handleClearCommand(CommandSender sender, String[] args) {
+    private boolean handleClearCommand(CommandSender sender) {
         try {
             awsMgr.clearPlayerAvatars(sender.getName());
             Bukkit.broadcastMessage(sender.getName() + " has cleared all instances");
@@ -73,7 +73,7 @@ public class EC2CommandExecutor implements CommandExecutor {
         return true;
     }
 
-    private boolean handleInfoCommand(CommandSender sender, String[] args) {
+    private boolean handleInfoCommand(CommandSender sender) {
         try {
             awsMgr.printInfo();
         }
@@ -85,7 +85,7 @@ public class EC2CommandExecutor implements CommandExecutor {
         return true;
     }
 
-    private boolean handleModeCommand(CommandSender sender, String[] args) {
+    private boolean handleModeCommand(CommandSender sender) {
         try {
             awsMgr.toggleMode();
             Bukkit.broadcastMessage(sender.getName() + " set mode to " + awsMgr.getDestructiveMode());

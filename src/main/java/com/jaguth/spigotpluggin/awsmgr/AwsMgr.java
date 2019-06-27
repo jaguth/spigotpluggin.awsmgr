@@ -76,7 +76,7 @@ public class AwsMgr {
         region = (Regions) awsMgrPluggin.getConfig().get("region");
 
         if (region == null) {
-            region = Regions.US_EAST_1;
+            region = Regions.US_WEST_2;
             saveRegion(region);
         }
     }

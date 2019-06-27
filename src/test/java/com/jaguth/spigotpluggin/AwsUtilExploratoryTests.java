@@ -17,6 +17,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jaguth.spigotpluggin.awsmgr.AwsUtil.createTagText;
+
 public class AwsUtilExploratoryTests {
     @Ignore
     @Test
@@ -47,12 +49,12 @@ public class AwsUtilExploratoryTests {
                                     "AMI %s, " +
                                     "type %s, " +
                                     "state %s " +
-                                    "and monitoring state %s",
+                                    "and nametag %s",
                             instance.getInstanceId(),
                             instance.getImageId(),
                             instance.getInstanceType(),
                             instance.getState().getName(),
-                            instance.getMonitoring().getState());
+                            createTagText(instance));
                 }
             }
         }
