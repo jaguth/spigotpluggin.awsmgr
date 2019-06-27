@@ -162,7 +162,7 @@ public class AwsMgr {
             info.add(" - " + awsAvatar.getMinecraftEntity().getCustomName());
         }
 
-        return StringUtils.join(info.toArray(), System.lineSeparator());
+        return StringUtils.join(info.toArray(), '\n');
     }
 
     public void fetchEC2AndSpawnAwsAvatars(String playerName, String ec2NameFilter, String entityType) throws Exception {
@@ -184,7 +184,7 @@ public class AwsMgr {
                 continue;
             }
 
-            String tagText = AwsUtil.getTagText(instance);
+            String tagText = AwsUtil.createTagText(instance);
             Entity entity = MinecraftUtil.spawnEntityFromText(entityType, tagText, player);
             AwsAvatar awsAvatar = new AwsAvatar(entity, instance, playerName);
             awsAvatarMap.put(instance.getInstanceId(), awsAvatar);
@@ -246,7 +246,7 @@ public class AwsMgr {
                 continue;
             }
 
-            String tagText = AwsUtil.getTagText(instance);
+            String tagText = AwsUtil.createTagText(instance);
             Map.Entry<String, Player> playerEntry = playerMap.entrySet().iterator().next(); // doesn't really matter what player to use, just use one at random
             Player player = playerEntry.getValue();
 

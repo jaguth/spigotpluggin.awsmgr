@@ -100,11 +100,11 @@ public class AwsUtil {
         return null;
     }
 
-    public static String getTagText(Instance instance) {
+    public static String createTagText(Instance instance) {
         // todo: figure out good strategy to not hardcode which tag to search
         String nameToUse = AwsUtil.getValueFromTags(instance.getTags(), "Name");
         String instanceId = instance.getInstanceId();
-        String tagText = nameToUse + " - " + instanceId;
+        String tagText = nameToUse + '\n' + instanceId;
 
         return tagText;
     }
