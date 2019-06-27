@@ -24,7 +24,7 @@ public class AwsMgrPluggin extends JavaPlugin {
 
         AwsRunnable awsRunnable = new AwsRunnable(awsMgr, this);
         BukkitScheduler scheduler = getServer().getScheduler();
-        scheduler.scheduleAsyncRepeatingTask(this, awsRunnable, delayInSeconds, periodInSeconds);
+        scheduler.scheduleSyncRepeatingTask(this, awsRunnable, delayInSeconds, periodInSeconds);
 
         System.out.println("[AwsMgr] Enabled");
         System.out.println("[AwsMgr] Make sure you set your aws credential provide chain 'before' you start your spigot server. For example, your ~/.aws/credentials file or the environment variables.  Otherwise, the AWS calls will fail.  More Info: https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html");

@@ -20,6 +20,6 @@ public class AwsRunnable extends BukkitRunnable {
     public void run() {
         EC2Monitor ec2Monitor = new EC2Monitor(awsMgr);
         BukkitScheduler scheduler = getServer().getScheduler();
-        scheduler.scheduleAsyncDelayedTask(awsMgrPluggin, ec2Monitor);
+        scheduler.scheduleSyncDelayedTask(awsMgrPluggin, ec2Monitor);
     }
 }

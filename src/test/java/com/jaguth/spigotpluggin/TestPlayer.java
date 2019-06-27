@@ -80,6 +80,11 @@ public class TestPlayer implements Player {
     }
 
     @Override
+    public void sendSignChange(Location loc, String[] lines, DyeColor dyeColor) throws IllegalArgumentException {
+
+    }
+
+    @Override
     public void setCompassTarget(Location loc) {
 
     }

@@ -58,7 +58,7 @@ public class AwsUtilExploratoryTests {
     @Ignore
     @Test
     public void testDescribeInstancesImplementation() {
-        List<Instance> instances = AwsUtil.getEC2Instances(Regions.US_EAST_1);
+        List<Instance> instances = AwsUtil.getEC2Instances("us-west-2");
 
         for (Instance instance : instances) {
             instance.getTags().forEach(tag -> {

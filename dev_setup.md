@@ -27,7 +27,7 @@ Spigot Server is an open source Minecraft server.  It is one of the most popular
     * downloadBuildTools
     * buildTheBuildTools
     * installThePlugin
-3) Start the server: java -Xms512M -Xmx1G -XX:+UseConcMarkSweepGC -jar buildtools/spigot-1.14.3.jar
+3) Start the server: java -Xms512M -Xmx1G -XX:+UseConcMarkSweepGC -jar spigot-1.14.3.jar
 
 To stop the server, in the server console enter the command: stop
 

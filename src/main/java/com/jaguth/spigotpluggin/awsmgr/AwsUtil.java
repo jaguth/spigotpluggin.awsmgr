@@ -18,7 +18,7 @@ public class AwsUtil {
     public static final int INSTANCE_RUNNING_CODE = 16;
     public static final int INSTANCE_PENDING_CODE = 0;
 
-    public static List<Instance> callAwsAndFilterEC2Instances(String ec2NameContainsFilter, Regions region) {
+    public static List<Instance> callAwsAndFilterEC2Instances(String ec2NameContainsFilter, String region) {
         List<Instance> responseInstances = AwsUtil.getEC2Instances(region);
         List<Instance> filteredInstances = new ArrayList<>();
 
@@ -38,11 +38,11 @@ public class AwsUtil {
         return filteredInstances;
     }
 
-    public static List<Instance> getEC2Instances(Regions region) {
+    public static List<Instance> getEC2Instances(String region) {
         return getEC2Instances(null, region);
     }
 
-    public static List<Instance> getEC2Instances(List<String> uniqueInstanceNames, Regions region) {
+    public static List<Instance> getEC2Instances(List<String> uniqueInstanceNames, String region) {
         List<Instance> instances = new ArrayList<>();
 
         final AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
@@ -109,7 +109,7 @@ public class AwsUtil {
         return tagText;
     }
 
-    public static void terminateEC2Instance(String instanceId, AwsAvatar awsAvatar, Regions region) {
+    public static void terminateEC2Instance(String instanceId, AwsAvatar awsAvatar, String region) {
         final AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
                                                     .withRegion(region)
                                                     .build();

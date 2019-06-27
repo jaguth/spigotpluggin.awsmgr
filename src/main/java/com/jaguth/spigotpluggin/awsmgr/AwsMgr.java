@@ -19,10 +19,14 @@ public class AwsMgr {
     private HashMap<String, AwsAvatar> awsAvatarMap; // key = instanceId
     private List<String> uniqueInstanceNames;
     private Boolean destructiveMode;
-    private Regions region;
+    private String region;
 
     public AwsMgr(AwsMgrPluggin awsMgrPluggin) {
         this.awsMgrPluggin = awsMgrPluggin;
+        loadAll();
+    }
+
+    private void loadAll() {
         loadPlayers();
         loadAwsAvatars();
         loadUniqueInstanceNames();
@@ -72,10 +76,10 @@ public class AwsMgr {
     }
 
     private void loadRegion() {
-        region = (Regions) awsMgrPluggin.getConfig().get("region");
+        region = (String) awsMgrPluggin.getConfig().get("region");
 
         if (region == null) {
-            region = Regions.US_EAST_1;
+            region = "us-west-2";
             saveRegion(region);
         }
     }
@@ -96,7 +100,7 @@ public class AwsMgr {
         awsMgrPluggin.getConfig().set("destructiveMode", destructiveMode);
     }
 
-    private void saveRegion(Regions region) {
+    private void saveRegion(String region) {
         awsMgrPluggin.getConfig().set("region", region);
     }
 
@@ -388,13 +392,13 @@ public class AwsMgr {
         saveDestructiveMode(destructiveMode);
     }
 
-    public void setRegion(String regionName) throws Exception {
+    public void setRegion(String region) throws Exception {
         try {
-            Regions region = Regions.fromName(regionName);
+            Regions.fromName(region); // validate string input
             saveRegion(region);
         }
         catch (Exception e) {
-            throw new Exception("Region " + regionName + " not found");
+            throw new Exception("Region " + region + " not found");
         }
     }
 }
