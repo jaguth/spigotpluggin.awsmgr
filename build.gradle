@@ -7,15 +7,24 @@ buildscript {
     }
 }
 
+plugins {
+    id "de.undercouch.download" version "3.4.3"
+}
+
 apply plugin: 'java'
 
 // for fat jar
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'com.jaguth'
-version '1.1'
+version '1.2.0'
 
 sourceCompatibility = 1.8
+
+def BUILDTOOLS_VERSION = "1.14.3"
+def BUILDTOOLS_DIR = "$projectDir/buildtools"
+def PLUGINS_DIR = "$BUILDTOOLS_DIR/plugins"
+def PLUGIN_NAME = "spigotpluggin.awsmgr-$version-all.jar"
 
 repositories {
     mavenCentral()
@@ -29,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.spigotmc:spigot-api:1.14.2-R0.1-SNAPSHOT' // from https://hub.spigotmc.org/nexus/content/repositories/snapshots/
+    compile "org.spigotmc:spigot-api:$BUILDTOOLS_VERSION-R0.1-SNAPSHOT" // from https://hub.spigotmc.org/nexus/content/repositories/snapshots/
 
     compile 'com.amazonaws:aws-java-sdk-ec2:1.11.505'
     compile 'com.amazonaws:aws-java-sdk-sts:1.11.505'
@@ -37,21 +46,37 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.+'
-    testCompile 'org.powermock:powermock-module-junit4:2.0.0'//
+    testCompile 'org.powermock:powermock-module-junit4:2.0.0'
     testCompile 'org.powermock:powermock-api-mockito2:2.0.0'
 }
 
-// convenience methods for myself
+
+
 task deleteFromSpigotServer(type: Delete) {
-    delete "../../localbin/spigotServer/plugins/spigotpluggin.awsmgr-1.1-all.jar"
+    delete "../plugins/spigotpluggin.awsmgr-1.0-all.jar"
     followSymlinks = true
 }
 deleteFromSpigotServer.group = 'custombuild'
 deleteFromSpigotServer.dependsOn shadowJar
 
 task buildAndCopyToSpigotServer(type: Copy) {
-    from file("$buildDir/libs/spigotpluggin.awsmgr-1.1-all.jar")
-    into file("../../localbin/spigotServer/plugins")
+    from file("$buildDir/libs/spigotpluggin.awsmgr-1.0-all.jar")
+    into file("../plugins")
 }
-buildAndCopyToSpigotServer.dependsOn deleteFromSpigotServer
-buildAndCopyToSpigotServer.group = 'custombuild'
+
+task buildTheBuildTools(group: 'spigot', dependsOn: jar) << {
+    println "It will take a few minutes to build the build tools"
+
+    javaexec {
+        workingDir = BUILDTOOLS_DIR
+        main = "-jar"
+        args '-Xmx1024M', '-jar', "$BUILDTOOLS_DIR/BuildTools.jar", '--rev', BUILDTOOLS_VERSION
+    }
+}
+
+task buildThePlugin () {}
+buildThePlugin.dependsOn shadowJar, clean
+
+task installThePlugin (group: 'spigot') {}
+installThePlugin.dependsOn deleteFromSpigotServer, copyToSpigotServer, buildThePlugin
+
