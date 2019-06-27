@@ -65,6 +65,11 @@ public class TestPlayer implements Player {
     }
 
     @Override
+    public void sendSignChange(Location loc, String[] lines, DyeColor dyeColor) throws IllegalArgumentException {
+
+    }
+
+    @Override
     public void setPlayerListHeader(String header) {
 
     }
@@ -76,11 +81,6 @@ public class TestPlayer implements Player {
 
     @Override
     public void setPlayerListHeaderFooter(String header, String footer) {
-
-    }
-
-    @Override
-    public void sendSignChange(Location loc, String[] lines, DyeColor dyeColor) throws IllegalArgumentException {
 
     }
 

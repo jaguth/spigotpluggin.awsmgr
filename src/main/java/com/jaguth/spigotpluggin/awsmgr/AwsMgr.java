@@ -26,7 +26,7 @@ public class AwsMgr {
         loadAll();
     }
 
-    private void loadAll() {
+    public void loadAll() {
         loadPlayers();
         loadAwsAvatars();
         loadUniqueInstanceNames();

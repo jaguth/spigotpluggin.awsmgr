@@ -1,6 +1,5 @@
 package com.jaguth.spigotpluggin.awsmgr;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.*;
@@ -118,11 +117,11 @@ public class AwsUtil {
         terminateInstancesRequest.withInstanceIds(instanceId);
         ec2.terminateInstances(terminateInstancesRequest);
 
-        Bukkit.broadcastMessage("Instance [" + awsAvatar.getMinecraftEntity().getCustomName() + "] killed!");
+        Bukkit.broadcastMessage("Instance [" + awsAvatar.getMinecraftEntity().getCustomName() + "] terminated!");
     }
 
     public static void fakeTerminateEC2Instance(AwsAvatar awsAvatar) {
-        Bukkit.broadcastMessage("[fake] Instance [" + awsAvatar.getMinecraftEntity().getCustomName() + "] killed!");
+        Bukkit.broadcastMessage("[fake] Instance [" + awsAvatar.getMinecraftEntity().getCustomName() + "] terminated!");
     }
 
     public static boolean isEC2InstanceRunning(Instance instance) {
