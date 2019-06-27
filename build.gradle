@@ -84,5 +84,5 @@ task buildThePlugin () {}
 buildThePlugin.dependsOn shadowJar, clean
 
 task installThePlugin (group: 'spigot') {}
-installThePlugin.dependsOn deleteFromSpigotServer, copyToSpigotServer, buildThePlugin
+installThePlugin.dependsOn copyToSpigotServer, buildThePlugin, deleteFromSpigotServer
 
