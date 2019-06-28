@@ -11,6 +11,7 @@ import com.jaguth.spigotpluggin.awsmgr.domain.AwsAvatar;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AwsUtil {
@@ -41,7 +42,7 @@ public class AwsUtil {
         return getEC2Instances(null, region);
     }
 
-    public static List<Instance> getEC2Instances(List<String> uniqueInstanceNames, String region) {
+    public static List<Instance> getEC2Instances(HashMap<String, String> instanceGroups, String region) {
         List<Instance> instances = new ArrayList<>();
 
         final AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
@@ -60,9 +61,10 @@ public class AwsUtil {
 //            request.setFilters(filters);
 //        }
 
-        if (uniqueInstanceNames != null && uniqueInstanceNames.size() > 0) {
+        if (instanceGroups != null && instanceGroups.size() > 0) {
             // todo: figure out good strategy to not hardcode which tag to search
-            Filter nameTagFilter = new Filter("tag:Name").withValues(uniqueInstanceNames);
+            List<String> instanceGroupNames = new ArrayList<>(instanceGroups.keySet());
+            Filter nameTagFilter = new Filter("tag:Name").withValues(instanceGroupNames);
             List<Filter> filters = Lists.newArrayList(nameTagFilter);
             request.setFilters(filters);
         }
@@ -103,7 +105,7 @@ public class AwsUtil {
         // todo: figure out good strategy to not hardcode which tag to search
         String nameToUse = AwsUtil.getValueFromTags(instance.getTags(), "Name");
         String instanceId = instance.getInstanceId();
-        String tagText = nameToUse + '\n' + instanceId;
+        String tagText = nameToUse + " [" + instanceId + "]";
 
         return tagText;
     }
@@ -117,11 +119,11 @@ public class AwsUtil {
         terminateInstancesRequest.withInstanceIds(instanceId);
         ec2.terminateInstances(terminateInstancesRequest);
 
-        Bukkit.broadcastMessage("Instance [" + awsAvatar.getMinecraftEntity().getCustomName() + "] terminated!");
+        Bukkit.broadcastMessage("Instance " + awsAvatar.getMinecraftEntity().getCustomName() + " terminated!");
     }
 
     public static void fakeTerminateEC2Instance(AwsAvatar awsAvatar) {
-        Bukkit.broadcastMessage("[fake] Instance [" + awsAvatar.getMinecraftEntity().getCustomName() + "] terminated!");
+        Bukkit.broadcastMessage("[fake] Instance " + awsAvatar.getMinecraftEntity().getCustomName() + " terminated!");
     }
 
     public static boolean isEC2InstanceRunning(Instance instance) {

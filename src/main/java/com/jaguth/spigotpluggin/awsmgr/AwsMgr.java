@@ -18,7 +18,7 @@ public class AwsMgr {
     private AwsMgrPluggin awsMgrPluggin;
     private HashMap<String, Player> playerMap; // key = playerName
     private HashMap<String, AwsAvatar> awsAvatarMap; // key = instanceId
-    private List<String> uniqueInstanceNames;
+    private HashMap<String, String> instanceGroups; // key = groupName, entityType
     private Boolean destructiveMode;
     private String region;
 
@@ -59,11 +59,11 @@ public class AwsMgr {
     }
 
     private void loadUniqueInstanceNames() {
-        uniqueInstanceNames = (List<String>) awsMgrPluggin.getConfig().get("uniqueInstanceNames");
+        instanceGroups = (HashMap<String, String>) awsMgrPluggin.getConfig().get("instanceGroups");
 
-        if (uniqueInstanceNames == null) {
-            uniqueInstanceNames = new ArrayList<>();
-            saveUniqueInstanceNameState(uniqueInstanceNames);
+        if (instanceGroups == null) {
+            instanceGroups = new HashMap<>();
+            saveUniqueInstanceNameState(instanceGroups);
         }
     }
 
@@ -93,8 +93,8 @@ public class AwsMgr {
         awsMgrPluggin.getConfig().set("awsAvatarMap", awsAvatars);
     }
 
-    private void saveUniqueInstanceNameState(List<String> uniqueInstanceNames) {
-        awsMgrPluggin.getConfig().set("uniqueInstanceNames", uniqueInstanceNames);
+    private void saveUniqueInstanceNameState(HashMap<String, String> uniqueInstanceNames) {
+        awsMgrPluggin.getConfig().set("instanceGroups", uniqueInstanceNames);
     }
 
     private void saveDestructiveMode(Boolean destructiveMode) {
@@ -176,7 +176,7 @@ public class AwsMgr {
         int beforeFetchInstanceCount = awsAvatarMap.size();
 
         List<Instance> instances = AwsUtil.callAwsAndFilterEC2Instances(ec2NameFilter, region);
-        populateUniqueInstanceNames(instances);
+        populateUniqueInstanceNames(instances, entityType);
 
         for (Instance instance : instances) {
             if (avatarExists(instance)) {
@@ -205,7 +205,7 @@ public class AwsMgr {
     }
 
     public void fetchEc2InstancesAndMerge() throws Exception {
-        List<Instance> instances = AwsUtil.getEC2Instances(uniqueInstanceNames, region);
+        List<Instance> instances = AwsUtil.getEC2Instances(instanceGroups, region);
         Map<String, Instance> instanceMap = new HashMap<>();
 
         for (Instance instance : instances) {
@@ -236,7 +236,7 @@ public class AwsMgr {
             // todo: figure out good strategy to not hardcode which tag to search
             String instanceName = AwsUtil.getValueFromTags(instance.getTags(), "Name");
 
-            if (!uniqueInstanceNames.contains(instanceName)) {
+            if (!instanceGroups.containsKey(instanceName)) {
                 // don't want to add names that don't match unique group
                 continue;
             }
@@ -255,7 +255,9 @@ public class AwsMgr {
             Map.Entry<String, Player> playerEntry = playerMap.entrySet().iterator().next(); // doesn't really matter what player to use, just use one at random
             Player player = playerEntry.getValue();
 
-            Entity entity = MinecraftUtil.spawnEntityFromText("random", tagText, player);
+            String entityType = instanceGroups.get(instanceName);
+
+            Entity entity = MinecraftUtil.spawnEntityFromText(entityType, tagText, player);
             AwsAvatar awsAvatar = new AwsAvatar(entity, instance, player.getName());
             awsAvatarMap.put(instance.getInstanceId(), awsAvatar);
             Bukkit.broadcastMessage("Instance " + instanceName + " - " + instance.getInstanceId() + " added!");
@@ -282,17 +284,17 @@ public class AwsMgr {
         saveAwsAvatarsState(awsAvatarMap);
     }
 
-    private void populateUniqueInstanceNames(List<Instance> instances) {
+    private void populateUniqueInstanceNames(List<Instance> instances, String entityType) {
         for (Instance instance : instances) {
             // todo: figure out good strategy to not hardcode which tag to search
             String instanceName = AwsUtil.getValueFromTags(instance.getTags(), "Name");
 
-            if (!uniqueInstanceNames.contains(instanceName)) {
-                uniqueInstanceNames.add(instanceName);
+            if (!instanceGroups.containsKey(instanceName)) {
+                instanceGroups.put(instanceName, entityType);
             }
         }
 
-        saveUniqueInstanceNameState(uniqueInstanceNames);
+        saveUniqueInstanceNameState(instanceGroups);
     }
 
     private boolean avatarExists(Instance instance) {
@@ -358,8 +360,8 @@ public class AwsMgr {
         }
 
         saveAwsAvatarsState(awsAvatarMap);
-        uniqueInstanceNames.clear();
-        saveUniqueInstanceNameState(uniqueInstanceNames);
+        instanceGroups.clear();
+        saveUniqueInstanceNameState(instanceGroups);
     }
 
     private void removeAvatar(Iterator<Map.Entry<String, AwsAvatar>> iterator, AwsAvatar awsAvatar) {

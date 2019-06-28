@@ -11,17 +11,30 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MinecraftUtil {
 
     enum EntityTypes {
-        //bat("bat", Bat.class),
+        bat("bat", Bat.class),
+        cat("cat", Cat.class),
+        cod("cod", Cod.class),
         chicken("chicken", Chicken.class),
         cow("cow", Cow.class),
         donkey("donkey", Donkey.class),
+        dolphin("dolphin", Dolphin.class),
+        fish("fish", Fish.class),
+        fox("fox", Fox.class),
         horse("horse", Horse.class),
         llama("llama", Llama.class),
+        mule("mule", Mule.class),
         ocelot("ocelot", Ocelot.class),
-        //parrot("parrot", Parrot.class),
+        pando("pando", Panda.class),
+        parrot("parrot", Parrot.class),
+        pig("pig", Pig.class),
         polarbear("polarbear", PolarBear.class),
+        pufferfish("pufferfish", PufferFish.class),
         rabbit("rabbit", Rabbit.class),
+        salmon("salmon", Salmon.class),
+        silverfish("silverfish", Silverfish.class),
         sheep("sheep", Sheep.class),
+        squid("squid", Squid.class),
+        tropicalfish("tropicalfish", TropicalFish.class),
         turtle("turtle", Turtle.class),
         wolf("wolf", Wolf.class);
 
@@ -46,6 +59,10 @@ public class MinecraftUtil {
             }
 
             throw new Exception("Entity \"" + entityName + "\" not found");
+        }
+
+        private static int generateRandomInt(int minRange, int maxRange) {
+            return ThreadLocalRandom.current().nextInt(minRange, maxRange);
         }
     }
 
