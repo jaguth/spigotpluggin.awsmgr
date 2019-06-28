@@ -3,8 +3,10 @@ package com.jaguth.spigotpluggin.awsmgr;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.model.Instance;
 import com.jaguth.spigotpluggin.awsmgr.domain.AwsAvatar;
+import com.jaguth.spigotpluggin.awsmgr.domain.GroupInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -17,7 +19,7 @@ public class AwsMgr {
     private AwsMgrPluggin awsMgrPluggin;
     private HashMap<String, Player> playerMap; // key = playerName
     private HashMap<String, AwsAvatar> awsAvatarMap; // key = instanceId
-    private HashMap<String, String> instanceGroups; // key = groupName, entityType
+    private HashMap<String, GroupInfo> instanceGroups; // key = groupName
     private Boolean destructiveMode;
     private String region;
 
@@ -58,7 +60,7 @@ public class AwsMgr {
     }
 
     private void loadUniqueInstanceNames() {
-        instanceGroups = (HashMap<String, String>) awsMgrPluggin.getConfig().get("instanceGroups");
+        instanceGroups = (HashMap<String, GroupInfo>) awsMgrPluggin.getConfig().get("instanceGroups");
 
         if (instanceGroups == null) {
             instanceGroups = new HashMap<>();
@@ -92,7 +94,7 @@ public class AwsMgr {
         awsMgrPluggin.getConfig().set("awsAvatarMap", awsAvatars);
     }
 
-    private void saveUniqueInstanceNameState(HashMap<String, String> uniqueInstanceNames) {
+    private void saveUniqueInstanceNameState(HashMap<String, GroupInfo> uniqueInstanceNames) {
         awsMgrPluggin.getConfig().set("instanceGroups", uniqueInstanceNames);
     }
 
@@ -136,8 +138,7 @@ public class AwsMgr {
     public String getDestructiveMode() {
         if (destructiveMode == true) {
             return "destructive";
-        }
-        else {
+        } else {
             return "sane";
         }
     }
@@ -175,7 +176,7 @@ public class AwsMgr {
         int beforeFetchInstanceCount = awsAvatarMap.size();
 
         List<Instance> instances = AwsUtil.callAwsAndFilterEC2Instances(ec2NameFilter, region);
-        populateUniqueInstanceNames(instances, entityType);
+        populateInstanceGroups(instances, entityType, player);
 
         for (Instance instance : instances) {
             if (avatarExists(instance)) {
@@ -189,7 +190,7 @@ public class AwsMgr {
             }
 
             String tagText = AwsUtil.createTagText(instance);
-            Entity entity = MinecraftUtil.spawnEntityFromText(entityType, tagText, player);
+            Entity entity = MinecraftUtil.spawnEntityAtPlayerLocation(entityType, tagText, player);
             AwsAvatar awsAvatar = new AwsAvatar(entity, instance, playerName);
             awsAvatarMap.put(instance.getInstanceId(), awsAvatar);
         }
@@ -254,9 +255,9 @@ public class AwsMgr {
             Map.Entry<String, Player> playerEntry = playerMap.entrySet().iterator().next(); // doesn't really matter what player to use, just use one at random
             Player player = playerEntry.getValue();
 
-            String entityType = instanceGroups.get(instanceName);
+            GroupInfo groupInfo = instanceGroups.get(instanceName);
 
-            Entity entity = MinecraftUtil.spawnEntityFromText(entityType, tagText, player);
+            Entity entity = MinecraftUtil.spawnEntityAtPlayerLocation(groupInfo.getEntityType(), tagText, player);
             AwsAvatar awsAvatar = new AwsAvatar(entity, instance, player.getName());
             awsAvatarMap.put(instance.getInstanceId(), awsAvatar);
             Bukkit.broadcastMessage("Instance " + instanceName + " - " + instance.getInstanceId() + " added!");
@@ -283,17 +284,45 @@ public class AwsMgr {
         saveAwsAvatarsState(awsAvatarMap);
     }
 
-    private void populateUniqueInstanceNames(List<Instance> instances, String entityType) {
+    private void populateInstanceGroups(List<Instance> instances, String entityType, Player player) {
+        List<String> listOfInstanceNamesToAdd = new ArrayList<>();
+
         for (Instance instance : instances) {
             // todo: figure out good strategy to not hardcode which tag to search
             String instanceName = AwsUtil.getValueFromTags(instance.getTags(), "Name");
 
             if (!instanceGroups.containsKey(instanceName)) {
-                instanceGroups.put(instanceName, entityType);
+                listOfInstanceNamesToAdd.add(instanceName);
             }
         }
 
+        String[] signText = listToSignText(listOfInstanceNamesToAdd);
+        Block spawnedSignBlock = MinecraftUtil.spawnSignWherePlayerLooking(player, signText);
+
+        for (String instanceName : listOfInstanceNamesToAdd) {
+            instanceGroups.put(instanceName, new GroupInfo(entityType, spawnedSignBlock));
+        }
+
         saveUniqueInstanceNameState(instanceGroups);
+    }
+
+    private String[] listToSignText(List<String> textList) {
+        String[] signText = new String[3];
+
+        int currentIndex = 0;
+
+        for (String text : textList) {
+            if (currentIndex <= 2) {
+                signText[currentIndex] = text;
+            }
+            else {
+                break;
+            }
+
+            currentIndex++;
+        }
+
+        return signText;
     }
 
     private boolean avatarExists(Instance instance) {
@@ -398,8 +427,7 @@ public class AwsMgr {
         try {
             Regions.fromName(region); // validate string input
             saveRegion(region);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception("Region " + region + " not found");
         }
     }

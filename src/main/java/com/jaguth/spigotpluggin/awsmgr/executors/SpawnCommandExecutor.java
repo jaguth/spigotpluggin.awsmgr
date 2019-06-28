@@ -40,7 +40,7 @@ public class SpawnCommandExecutor implements CommandExecutor {
 
         try {
             for (int i = 0; i < count; i++) {
-                MinecraftUtil.spawnEntityFromText(entityName, tagText, player);
+                MinecraftUtil.spawnEntityAtPlayerLocation(entityName, tagText, player);
             }
         }
         catch (Exception e) {

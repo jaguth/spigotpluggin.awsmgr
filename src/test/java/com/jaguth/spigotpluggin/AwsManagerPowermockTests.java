@@ -84,7 +84,7 @@ public class AwsManagerPowermockTests {
         when(awsMgrPlugginMock.getConfig().get("awsAvatarMap")).thenReturn(awsAvatarMap);
         when(awsMgrPlugginMock.getConfig().get("uniqueInstanceNames")).thenReturn(uniqueInstanceNames);
         mockStatic(MinecraftUtil.class);
-        when(MinecraftUtil.spawnEntityFromText(anyString(), anyString(), any(Player.class))).thenReturn(null);
+        when(MinecraftUtil.spawnEntityAtPlayerLocation(anyString(), anyString(), any(Player.class))).thenReturn(null);
 
         AwsMgr awsMgr = new AwsMgr(awsMgrPlugginMock);
         awsMgr.spawnNewAvatarsByUniqueInstanceName(newInstanceMap);
@@ -147,7 +147,7 @@ public class AwsManagerPowermockTests {
         when(awsMgrPlugginMock.getConfig().get("awsAvatarMap")).thenReturn(awsAvatarMap);
         when(awsMgrPlugginMock.getConfig().get("uniqueInstanceNames")).thenReturn(uniqueInstanceNames);
         mockStatic(MinecraftUtil.class);
-        when(MinecraftUtil.spawnEntityFromText(anyString(), anyString(), any(Player.class))).thenReturn(null);
+        when(MinecraftUtil.spawnEntityAtPlayerLocation(anyString(), anyString(), any(Player.class))).thenReturn(null);
 
         AwsMgr awsMgr = new AwsMgr(awsMgrPlugginMock);
         awsMgr.spawnNewAvatarsByUniqueInstanceName(newInstanceMap);

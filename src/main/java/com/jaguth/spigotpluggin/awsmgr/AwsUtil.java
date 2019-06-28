@@ -8,6 +8,7 @@ import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest;
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityResult;
 import com.google.common.collect.Lists;
 import com.jaguth.spigotpluggin.awsmgr.domain.AwsAvatar;
+import com.jaguth.spigotpluggin.awsmgr.domain.GroupInfo;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class AwsUtil {
         return getEC2Instances(null, region);
     }
 
-    public static List<Instance> getEC2Instances(HashMap<String, String> instanceGroups, String region) {
+    public static List<Instance> getEC2Instances(HashMap<String, GroupInfo> instanceGroups, String region) {
         List<Instance> instances = new ArrayList<>();
 
         final AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
