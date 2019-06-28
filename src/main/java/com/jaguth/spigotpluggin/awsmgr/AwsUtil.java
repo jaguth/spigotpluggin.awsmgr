@@ -103,7 +103,7 @@ public class AwsUtil {
         // todo: figure out good strategy to not hardcode which tag to search
         String nameToUse = AwsUtil.getValueFromTags(instance.getTags(), "Name");
         String instanceId = instance.getInstanceId();
-        String tagText = nameToUse + '\n' + instanceId;
+        String tagText = nameToUse + " [" + instanceId + "]";
 
         return tagText;
     }
@@ -117,11 +117,11 @@ public class AwsUtil {
         terminateInstancesRequest.withInstanceIds(instanceId);
         ec2.terminateInstances(terminateInstancesRequest);
 
-        Bukkit.broadcastMessage("Instance [" + awsAvatar.getMinecraftEntity().getCustomName() + "] terminated!");
+        Bukkit.broadcastMessage("Instance " + awsAvatar.getMinecraftEntity().getCustomName() + " terminated!");
     }
 
     public static void fakeTerminateEC2Instance(AwsAvatar awsAvatar) {
-        Bukkit.broadcastMessage("[fake] Instance [" + awsAvatar.getMinecraftEntity().getCustomName() + "] terminated!");
+        Bukkit.broadcastMessage("[fake] Instance " + awsAvatar.getMinecraftEntity().getCustomName() + " terminated!");
     }
 
     public static boolean isEC2InstanceRunning(Instance instance) {
