@@ -8,6 +8,7 @@ import com.jaguth.spigotpluggin.awsmgr.AwsUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static com.jaguth.spigotpluggin.awsmgr.AwsUtil.INSTANCE_RUNNING_CODE;
@@ -45,8 +46,9 @@ public class AwsUtilTests {
 
     @Test
     public void testGetInstances() {
-        List<String> tagNames = Lists.newArrayList("sociallinks");
-        List<Instance> instances = AwsUtil.getEC2Instances(tagNames, "us-west-2");
+        HashMap<String, String> instanceGroups = new HashMap<>();
+        instanceGroups.put("sociallinks", "cow");
+        List<Instance> instances = AwsUtil.getEC2Instances(instanceGroups, "us-west-2");
         Assert.assertTrue(instances.size() > 0);
     }
 
