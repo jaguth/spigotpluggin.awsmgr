@@ -190,7 +190,9 @@ public class AwsMgr {
             }
 
             String tagText = AwsUtil.createTagText(instance);
-            Entity entity = MinecraftUtil.spawnEntityAtPlayerLocation(entityType, tagText, player);
+            String instanceName = AwsUtil.getValueFromTags(instance.getTags(), "Name");
+            GroupInfo instanceGroup = instanceGroups.get(instanceName);
+            Entity entity = MinecraftUtil.spawnEntityNextToBlock(entityType, tagText, instanceGroup.getSpawnBlock());
             AwsAvatar awsAvatar = new AwsAvatar(entity, instance, playerName);
             awsAvatarMap.put(instance.getInstanceId(), awsAvatar);
         }
@@ -306,13 +308,15 @@ public class AwsMgr {
         saveUniqueInstanceNameState(instanceGroups);
     }
 
-    private String[] listToSignText(List<String> textList) {
-        String[] signText = new String[3];
+    public static String[] listToSignText(List<String> textList) {
+        final int MAX_LINES_FOR_SIGN = 4;
+
+        String[] signText = new String[MAX_LINES_FOR_SIGN];
 
         int currentIndex = 0;
 
         for (String text : textList) {
-            if (currentIndex <= 2) {
+            if (currentIndex <= 3) {
                 signText[currentIndex] = text;
             }
             else {

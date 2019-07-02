@@ -1,5 +1,6 @@
 package com.jaguth.spigotpluggin.awsmgr;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -9,7 +10,9 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.entity.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MinecraftUtil {
@@ -104,33 +107,30 @@ public class MinecraftUtil {
         return entity;
     }
 
-    public static Entity spawnEntityAtBlockLocation(String entityType, String tagText, Block block) throws Exception {
+    public static Entity spawnEntityNextToBlock(String entityType, String tagText, Block block) throws Exception {
         World world = block.getWorld();
         Class entityClass = EntityTypes.getEntityClass(entityType);
+
+        Location location = block.getLocation();
+        location.setZ(location.getBlockZ() + 1);
+        location.setX(location.getBlockX() + 1);
+
         Entity entity = world.spawn(block.getLocation(), entityClass);
         entity.setCustomName(tagText);
         entity.setCustomNameVisible(true);
-        world.playEffect(entity.getLocation(), Effect.SMOKE, 50, 10);
 
         return entity;
     }
 
     public static Block spawnSignWherePlayerLooking(Player player, String[] signText) {
-        final int maxRange = 100;
+        final int maxRange = 3;
         World world = player.getWorld();
 
+        // calculate the next-highest block above target block so we can spawn a sign there
         Block targetBlock = player.getTargetBlock(null, maxRange);
         Block highestBlock = world.getHighestBlockAt(targetBlock.getX(), targetBlock.getZ());
-        highestBlock.setType(Material.OAK_SIGN);
 
-        Sign sign = (Sign) highestBlock.getState();
-
-        if (signText.length > 0) {
-            for (int i = 0; i < signText.length && i < 4; i++) {
-                sign.setLine(0, signText[i]);
-            }
-        }
-
+        // set the block facing the player
         BlockFace oppositeFace = player.getFacing().getOppositeFace();
         BlockData signBlockData = highestBlock.getBlockData();
 
@@ -138,6 +138,18 @@ public class MinecraftUtil {
             Directional directional = (Directional) signBlockData;
             directional.setFacing(oppositeFace);
         }
+
+        // turn block into sign and set text
+        highestBlock.setType(Material.OAK_SIGN);
+        Sign sign = (Sign) highestBlock.getState();
+
+        if (signText.length > 0) {
+            for (int i = 0; i < signText.length && i < 4; i++) {
+                sign.setLine(i, signText[i]);
+            }
+        }
+
+        sign.update();
 
         return highestBlock;
     }
