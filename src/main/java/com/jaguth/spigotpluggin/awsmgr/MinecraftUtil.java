@@ -107,22 +107,22 @@ public class MinecraftUtil {
         return entity;
     }
 
-    public static Entity spawnEntityNextToBlock(String entityType, String tagText, Block block) throws Exception {
-        World world = block.getWorld();
+    public static Entity spawnEntityNextToSign(String entityType, String tagText, Sign sign) throws Exception {
+        World world = sign.getWorld();
         Class entityClass = EntityTypes.getEntityClass(entityType);
 
-        Location location = block.getLocation();
+        Location location = sign.getLocation();
         location.setZ(location.getBlockZ() + 1);
         location.setX(location.getBlockX() + 1);
 
-        Entity entity = world.spawn(block.getLocation(), entityClass);
+        Entity entity = world.spawn(sign.getLocation(), entityClass);
         entity.setCustomName(tagText);
         entity.setCustomNameVisible(true);
 
         return entity;
     }
 
-    public static Block spawnSignWherePlayerLooking(Player player, String[] signText) {
+    public static Sign spawnSignWherePlayerLooking(Player player, String[] signText) {
         final int maxRange = 3;
         World world = player.getWorld();
 
@@ -151,6 +151,6 @@ public class MinecraftUtil {
 
         sign.update();
 
-        return highestBlock;
+        return sign;
     }
 }

@@ -6,7 +6,7 @@ import com.jaguth.spigotpluggin.awsmgr.domain.AwsAvatar;
 import com.jaguth.spigotpluggin.awsmgr.domain.GroupInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -20,6 +20,7 @@ public class AwsMgr {
     private HashMap<String, Player> playerMap; // key = playerName
     private HashMap<String, AwsAvatar> awsAvatarMap; // key = instanceId
     private HashMap<String, GroupInfo> instanceGroups; // key = groupName
+    private List<Sign> spawnedSigns;
     private Boolean destructiveMode;
     private String region;
 
@@ -34,6 +35,7 @@ public class AwsMgr {
         loadUniqueInstanceNames();
         loadDestructiveMode();
         loadRegion();
+        loadSpawnedSigns();
     }
 
     // note: spigot handles all plugin classes as stateless. so each time an event is triggered, AwsMgr is instantiated, and all of its members
@@ -86,6 +88,15 @@ public class AwsMgr {
         }
     }
 
+    private void loadSpawnedSigns() {
+        spawnedSigns = (List<Sign>) awsMgrPluggin.getConfig().get("spawnedSigns");
+
+        if (spawnedSigns == null) {
+            spawnedSigns = new ArrayList<>();
+            saveSpawnedSigns(spawnedSigns);
+        }
+    }
+
     private void savePlayersState(HashMap<String, Player> players) {
         awsMgrPluggin.getConfig().set("playerMap", players);
     }
@@ -106,6 +117,9 @@ public class AwsMgr {
         awsMgrPluggin.getConfig().set("region", region);
     }
 
+    private void saveSpawnedSigns(List<Sign> spawnedSigns) {
+        awsMgrPluggin.getConfig().set("spawnedSigns", spawnedSigns);
+    }
 
     public void addPlayer(Player player) {
         playerMap.put(player.getName(), player);
@@ -114,6 +128,10 @@ public class AwsMgr {
 
     public Player getPlayer(String playerName) {
         return playerMap.get(playerName);
+    }
+
+    public List<Sign> getSpawnedSigns() {
+        return spawnedSigns;
     }
 
     public boolean playersInServer() {
@@ -192,7 +210,7 @@ public class AwsMgr {
             String tagText = AwsUtil.createTagText(instance);
             String instanceName = AwsUtil.getValueFromTags(instance.getTags(), "Name");
             GroupInfo instanceGroup = instanceGroups.get(instanceName);
-            Entity entity = MinecraftUtil.spawnEntityNextToBlock(entityType, tagText, instanceGroup.getSpawnBlock());
+            Entity entity = MinecraftUtil.spawnEntityNextToSign(entityType, tagText, instanceGroup.getSpawnedSign());
             AwsAvatar awsAvatar = new AwsAvatar(entity, instance, playerName);
             awsAvatarMap.put(instance.getInstanceId(), awsAvatar);
         }
@@ -293,19 +311,22 @@ public class AwsMgr {
             // todo: figure out good strategy to not hardcode which tag to search
             String instanceName = AwsUtil.getValueFromTags(instance.getTags(), "Name");
 
-            if (!instanceGroups.containsKey(instanceName)) {
+            if (!instanceGroups.containsKey(instanceName) && !listOfInstanceNamesToAdd.contains(instanceName)) {
                 listOfInstanceNamesToAdd.add(instanceName);
             }
         }
 
         String[] signText = listToSignText(listOfInstanceNamesToAdd);
-        Block spawnedSignBlock = MinecraftUtil.spawnSignWherePlayerLooking(player, signText);
+        Sign spawnedSign = MinecraftUtil.spawnSignWherePlayerLooking(player, signText);
 
         for (String instanceName : listOfInstanceNamesToAdd) {
-            instanceGroups.put(instanceName, new GroupInfo(entityType, spawnedSignBlock));
+            instanceGroups.put(instanceName, new GroupInfo(entityType, spawnedSign));
         }
 
         saveUniqueInstanceNameState(instanceGroups);
+
+        spawnedSigns.add(spawnedSign);
+        saveSpawnedSigns(spawnedSigns);
     }
 
     public static String[] listToSignText(List<String> textList) {

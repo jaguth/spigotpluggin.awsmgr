@@ -2,6 +2,7 @@ package com.jaguth.spigotpluggin.awsmgr;
 
 import com.jaguth.spigotpluggin.awsmgr.executors.EC2CommandExecutor;
 import com.jaguth.spigotpluggin.awsmgr.executors.SpawnCommandExecutor;
+import com.jaguth.spigotpluggin.awsmgr.listeners.BlockListener;
 import com.jaguth.spigotpluggin.awsmgr.listeners.PlayerListener;
 import com.jaguth.spigotpluggin.awsmgr.runnables.AwsRunnable;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +18,7 @@ public class AwsMgrPluggin extends JavaPlugin {
         this.getCommand("ec2").setExecutor(new EC2CommandExecutor(awsMgr));
         this.getCommand("spawn").setExecutor(new SpawnCommandExecutor(awsMgr));
         getServer().getPluginManager().registerEvents(new PlayerListener(awsMgr), this);
+        getServer().getPluginManager().registerEvents(new BlockListener(awsMgr), this);
 
         long delayInSeconds = 10;
         long periodInSeconds = 10 * MINECRAFT_TICKS_PER_SECOND;

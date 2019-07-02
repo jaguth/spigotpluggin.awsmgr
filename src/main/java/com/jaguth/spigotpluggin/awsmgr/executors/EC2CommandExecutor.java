@@ -2,6 +2,7 @@ package com.jaguth.spigotpluggin.awsmgr.executors;
 
 import com.jaguth.spigotpluggin.awsmgr.AwsMgr;
 import com.jaguth.spigotpluggin.awsmgr.MinecraftUtil;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -61,7 +62,7 @@ public class EC2CommandExecutor implements CommandExecutor {
             awsMgr.fetchEC2AndSpawnAwsAvatars(sender.getName(), ec2NameFilter, entityType);
         }
         catch (Exception e) {
-            sender.sendMessage("Failed to fetch EC2 instances: " + e.toString());
+            sender.sendMessage("Failed to fetch EC2 instances: " + e.toString() + "\n" + ExceptionUtils.getStackTrace(e));
             return false;
         }
 

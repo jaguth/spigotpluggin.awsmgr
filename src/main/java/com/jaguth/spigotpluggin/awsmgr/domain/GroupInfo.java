@@ -1,14 +1,14 @@
 package com.jaguth.spigotpluggin.awsmgr.domain;
 
-import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 
 public class GroupInfo {
     private String entityType;
-    private Block spawnBlock;
+    private Sign spawnedSign;
 
-    public GroupInfo(String entityType, Block spawnBlock) {
+    public GroupInfo(String entityType, Sign spawnedSign) {
         this.entityType = entityType;
-        this.spawnBlock = spawnBlock;
+        this.spawnedSign = spawnedSign;
     }
 
     public String getEntityType() {
@@ -19,11 +19,11 @@ public class GroupInfo {
         this.entityType = entityType;
     }
 
-    public Block getSpawnBlock() {
-        return spawnBlock;
+    public Sign getSpawnedSign() {
+        return spawnedSign;
     }
 
-    public void setSpawnBlock(Block spawnBlock) {
-        this.spawnBlock = spawnBlock;
+    public void setSpawnedSign(Sign spawnedSign) {
+        this.spawnedSign = spawnedSign;
     }
 }
