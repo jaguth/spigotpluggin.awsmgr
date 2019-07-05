@@ -21,26 +21,8 @@ public class BlockListener implements Listener {
         Block block = blockBreakEvent.getBlock();
 
         if (block.getType() == Material.OAK_SIGN) {
-            //Bukkit.broadcastMessage("oak sign broke!");
-            handleOakSignBreak((Sign) block.getState());
+            awsMgr.destroyInstanceGroupsThatBelongingToDestroyedSign((Sign) block.getState());
         }
-    }
-
-    private void handleOakSignBreak(Sign brokenSign) {
-        //Bukkit.broadcastMessage("broken block sign:");
-        //printSign(sign.getLines());
-
-        awsMgr.destroyInstanceGroupsThatBelongingToDestroyedSign(brokenSign);
-
-        //for (Sign spawnedSign : awsMgr.getSpawnedSigns()) {
-            //Bukkit.broadcastMessage("spawned signed:");
-            //printSign(spawnedSign.getLines());
-
-          //  if (Arrays.equals(spawnedSign.getLines(), sign.getLines()))  {
-
-                //Bukkit.broadcastMessage("i equal sign!");
-            //}
-        //}
     }
 
     private void printSign(String[] signText) {

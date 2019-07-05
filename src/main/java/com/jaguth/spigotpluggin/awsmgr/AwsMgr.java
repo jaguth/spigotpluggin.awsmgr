@@ -334,7 +334,7 @@ public class AwsMgr {
         saveSpawnedSigns(spawnedSigns);
     }
 
-    public void     destroyInstanceGroupsThatBelongingToDestroyedSign(Sign destroyedSpawnedSign) {
+    public void destroyInstanceGroupsThatBelongingToDestroyedSign(Sign destroyedSpawnedSign) {
         // remove instance group(s)
         Iterator<Map.Entry<String, GroupInfo>> instanceGroupIterator = instanceGroups.entrySet().iterator();
 
@@ -378,9 +378,9 @@ public class AwsMgr {
 
         while (avatarIterator.hasNext()) {
             AwsAvatar awsAvatar = avatarIterator.next().getValue();
-            String name = AwsUtil.getValueFromTags(awsAvatar.getAwsInsance().getTags(), instanceName);
+            String name = AwsUtil.getValueFromTags(awsAvatar.getAwsInsance().getTags(), "Name");
 
-            if (name != null && name.equals(instanceName)) {
+            if (name != null && name.equalsIgnoreCase(instanceName)) {
                 removeAvatar(avatarIterator, awsAvatar);
             }
         }
