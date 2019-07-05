@@ -7,6 +7,7 @@ import com.jaguth.spigotpluggin.awsmgr.domain.AwsAvatar;
 import com.jaguth.spigotpluggin.awsmgr.domain.GroupInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -523,11 +524,15 @@ public class AwsMgr {
     }
 
     public void addSQSReceiverToWorld(String playerName, String queueName, String entityType) {
-        MinecraftUtil.spawnSignWherePlayerLooking(findPlayerInWorld(playerName));
+        String[] signText = new String[3];
+        signText[0] = queueName;
+        MinecraftUtil.spawnSignWherePlayerLooking(findPlayerInWorld(playerName), signText);
     }
 
     public void addSQSSenderToWorld(String playerName, String queueName, String entityType) {
-        MinecraftUtil.spawnSignWherePlayerLooking(findPlayerInWorld(playerName));
+        String[] signText = new String[3];
+        signText[0] = queueName;
+        MinecraftUtil.spawnSignWherePlayerLooking(findPlayerInWorld(playerName), signText);
     }
 
     private Player findPlayerInWorld(String playerName) {
