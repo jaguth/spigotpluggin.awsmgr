@@ -21,35 +21,35 @@ public class BlockListener implements Listener {
         Block block = blockBreakEvent.getBlock();
 
         if (block.getType() == Material.OAK_SIGN) {
-            Sign sign = (Sign) block;
-            Bukkit.broadcastMessage("oak sign broke!");
-
-            printSpawnedSignBlocks();
-
-            for (Sign spawnedSign : awsMgr.getSpawnedSigns()) {
-                Bukkit.broadcastMessage("in a sign");
-               if (spawnedSign.getLines().equals(sign))  {
-                   Bukkit.broadcastMessage("i equal sign!");
-               }
-            }
-//
-//            if (awsMgr.getSpawnedSigns().contains(block)) {
-//                Bukkit.broadcastMessage("in spawned sign list!");
-//            }
-
+            //Bukkit.broadcastMessage("oak sign broke!");
+            handleOakSignBreak((Sign) block.getState());
         }
     }
 
-    public void printSpawnedSignBlocks() {
-        for (Sign sign : awsMgr.getSpawnedSigns()) {
-            String[] lines = sign.getLines();
+    private void handleOakSignBreak(Sign brokenSign) {
+        //Bukkit.broadcastMessage("broken block sign:");
+        //printSign(sign.getLines());
 
-            Bukkit.broadcastMessage("-- block of lines start --");
+        awsMgr.destroyInstanceGroupsThatBelongingToDestroyedSign(brokenSign);
 
-            for (int i = 0; i < lines.length; i++) {
-                Bukkit.broadcastMessage(lines[i]);
-            }
-        }
+        //for (Sign spawnedSign : awsMgr.getSpawnedSigns()) {
+            //Bukkit.broadcastMessage("spawned signed:");
+            //printSign(spawnedSign.getLines());
+
+          //  if (Arrays.equals(spawnedSign.getLines(), sign.getLines()))  {
+
+                //Bukkit.broadcastMessage("i equal sign!");
+            //}
+        //}
     }
 
+    private void printSign(String[] signText) {
+        if (signText == null) {
+            return;
+        }
+
+        for (String line : signText) {
+            Bukkit.broadcastMessage(line);
+        }
+    }
 }

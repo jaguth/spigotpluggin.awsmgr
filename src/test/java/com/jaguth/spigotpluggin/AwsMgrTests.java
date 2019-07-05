@@ -144,7 +144,7 @@ public class AwsMgrTests {
     }
 
     @Test
-    public void listToSignTextTest() {
+    public void listToSignTextTest1() {
         List<String> inputList = new ArrayList<>();
         inputList.add("first line");
         inputList.add("second line");
@@ -153,13 +153,28 @@ public class AwsMgrTests {
         inputList.add("this line won't be output since a sign holds a maximum of 4 lines");
 
         String[] outputArray = AwsMgr.listToSignText(inputList);
+        int expectedLineCount = 4;
 
-        String[] expectedArray = new String[4];
-        expectedArray[0] = "first line";
-        expectedArray[1] = "second line";
-        expectedArray[2] = "third line";
-        expectedArray[3] = "last line";
+        Assert.assertEquals(expectedLineCount, outputArray.length);
+        Assert.assertEquals("first line", outputArray[0]);
+        Assert.assertEquals("second line", outputArray[1]);
+        Assert.assertEquals("third line", outputArray[2]);
+        Assert.assertEquals("last line", outputArray[3]);
+    }
 
-        Assert.assertArrayEquals(expectedArray, outputArray);
+    @Test
+    public void listToSignTextTest2() {
+        List<String> inputList = new ArrayList<>();
+        inputList.add("first line");
+        inputList.add("second line");
+        inputList.add("third line");
+
+        String[] outputArray = AwsMgr.listToSignText(inputList);
+        int expectedLineCount = 3;
+
+        Assert.assertEquals(expectedLineCount, outputArray.length);
+        Assert.assertEquals("first line", outputArray[0]);
+        Assert.assertEquals("second line", outputArray[1]);
+        Assert.assertEquals("third line", outputArray[2]);
     }
 }

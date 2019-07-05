@@ -2,6 +2,7 @@ package com.jaguth.spigotpluggin.awsmgr;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.model.Instance;
+import com.google.common.collect.Lists;
 import com.jaguth.spigotpluggin.awsmgr.domain.AwsAvatar;
 import com.jaguth.spigotpluggin.awsmgr.domain.GroupInfo;
 import org.apache.commons.lang.StringUtils;
@@ -66,7 +67,7 @@ public class AwsMgr {
 
         if (instanceGroups == null) {
             instanceGroups = new HashMap<>();
-            saveUniqueInstanceNameState(instanceGroups);
+            saveInstanceGroups(instanceGroups);
         }
     }
 
@@ -105,8 +106,8 @@ public class AwsMgr {
         awsMgrPluggin.getConfig().set("awsAvatarMap", awsAvatars);
     }
 
-    private void saveUniqueInstanceNameState(HashMap<String, GroupInfo> uniqueInstanceNames) {
-        awsMgrPluggin.getConfig().set("instanceGroups", uniqueInstanceNames);
+    private void saveInstanceGroups(HashMap<String, GroupInfo> instanceGroups) {
+        awsMgrPluggin.getConfig().set("instanceGroups", instanceGroups);
     }
 
     private void saveDestructiveMode(Boolean destructiveMode) {
@@ -277,7 +278,7 @@ public class AwsMgr {
 
             GroupInfo groupInfo = instanceGroups.get(instanceName);
 
-            Entity entity = MinecraftUtil.spawnEntityAtPlayerLocation(groupInfo.getEntityType(), tagText, player);
+            Entity entity = MinecraftUtil.spawnEntityNextToSign(groupInfo.getEntityType(), tagText, groupInfo.getSpawnedSign());
             AwsAvatar awsAvatar = new AwsAvatar(entity, instance, player.getName());
             awsAvatarMap.put(instance.getInstanceId(), awsAvatar);
             Bukkit.broadcastMessage("Instance " + instanceName + " - " + instance.getInstanceId() + " added!");
@@ -304,8 +305,10 @@ public class AwsMgr {
         saveAwsAvatarsState(awsAvatarMap);
     }
 
+    private static String SPAWNER_EC2 = "spawner:ec2";
+
     private void populateInstanceGroups(List<Instance> instances, String entityType, Player player) {
-        List<String> listOfInstanceNamesToAdd = new ArrayList<>();
+        ArrayList<String> listOfInstanceNamesToAdd = new ArrayList<>();
 
         for (Instance instance : instances) {
             // todo: figure out good strategy to not hardcode which tag to search
@@ -316,23 +319,85 @@ public class AwsMgr {
             }
         }
 
-        String[] signText = listToSignText(listOfInstanceNamesToAdd);
+        ArrayList<String> signTextList = Lists.newArrayList(listOfInstanceNamesToAdd);
+        signTextList.add(0, SPAWNER_EC2);
+        String[] signText = listToSignText(signTextList);
         Sign spawnedSign = MinecraftUtil.spawnSignWherePlayerLooking(player, signText);
 
         for (String instanceName : listOfInstanceNamesToAdd) {
             instanceGroups.put(instanceName, new GroupInfo(entityType, spawnedSign));
         }
 
-        saveUniqueInstanceNameState(instanceGroups);
+        saveInstanceGroups(instanceGroups);
 
         spawnedSigns.add(spawnedSign);
         saveSpawnedSigns(spawnedSigns);
     }
 
+    public void     destroyInstanceGroupsThatBelongingToDestroyedSign(Sign destroyedSpawnedSign) {
+        // remove instance group(s)
+        Iterator<Map.Entry<String, GroupInfo>> instanceGroupIterator = instanceGroups.entrySet().iterator();
+
+        while (instanceGroupIterator.hasNext()) {
+            GroupInfo groupInfo = instanceGroupIterator.next().getValue();
+
+            if (Arrays.equals(groupInfo.getSpawnedSign().getLines(), destroyedSpawnedSign.getLines())) {
+                instanceGroupIterator.remove();
+            }
+        }
+
+        saveInstanceGroups(instanceGroups);
+
+        // remove avatars(s)
+        for (String instanceName : destroyedSpawnedSign.getLines()) {
+            if (instanceName.startsWith("spawner")) {
+                // first line is just spawner marker
+                continue;
+            }
+
+            removeAvatarsBeloningToInstance(instanceName);
+        }
+
+        // remove spawned sign
+        Iterator<Sign> spawnedSignIterator = spawnedSigns.iterator();
+
+        while (spawnedSignIterator.hasNext()) {
+            Sign spawnedSign = spawnedSignIterator.next();
+
+            if (Arrays.equals(spawnedSign.getLines(), destroyedSpawnedSign.getLines())) {
+                spawnedSignIterator.remove();
+            }
+        }
+
+        saveSpawnedSigns(spawnedSigns);
+    }
+
+
+    private void removeAvatarsBeloningToInstance(String instanceName) {
+        Iterator<Map.Entry<String, AwsAvatar>> avatarIterator = awsAvatarMap.entrySet().iterator();
+
+        while (avatarIterator.hasNext()) {
+            AwsAvatar awsAvatar = avatarIterator.next().getValue();
+            String name = AwsUtil.getValueFromTags(awsAvatar.getAwsInsance().getTags(), instanceName);
+
+            if (name != null && name.equals(instanceName)) {
+                removeAvatar(avatarIterator, awsAvatar);
+            }
+        }
+
+        saveAwsAvatarsState(awsAvatarMap);
+    }
+
     public static String[] listToSignText(List<String> textList) {
         final int MAX_LINES_FOR_SIGN = 4;
 
-        String[] signText = new String[MAX_LINES_FOR_SIGN];
+        int lineSize = MAX_LINES_FOR_SIGN;
+
+        if (textList.size() < MAX_LINES_FOR_SIGN) {
+            lineSize = textList.size();
+        }
+
+        String[] signText = new String[lineSize];
 
         int currentIndex = 0;
 
@@ -414,7 +479,7 @@ public class AwsMgr {
 
         saveAwsAvatarsState(awsAvatarMap);
         instanceGroups.clear();
-        saveUniqueInstanceNameState(instanceGroups);
+        saveInstanceGroups(instanceGroups);
     }
 
     private void removeAvatar(Iterator<Map.Entry<String, AwsAvatar>> iterator, AwsAvatar awsAvatar) {
