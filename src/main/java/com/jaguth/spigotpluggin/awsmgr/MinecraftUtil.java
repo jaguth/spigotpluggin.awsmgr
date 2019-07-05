@@ -1,16 +1,23 @@
 package com.jaguth.spigotpluggin.awsmgr;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MinecraftUtil {
 
-    enum EntityTypes {
+    public enum EntityTypes {
         bat("bat", Bat.class),
         cat("cat", Cat.class),
         cod("cod", Cod.class),
@@ -46,7 +53,7 @@ public class MinecraftUtil {
             this.entityClass = entityClass;
         }
 
-        private static Class getEntityClass(String entityName) throws Exception {
+        public static Class getEntityClass(String entityName) throws Exception {
             if ("random".equals(entityName.toLowerCase().trim())) {
                 int randomNumber = generateRandomInt(0, EntityTypes.values().length);
                 return EntityTypes.values()[randomNumber].entityClass;
@@ -61,15 +68,37 @@ public class MinecraftUtil {
             throw new Exception("Entity \"" + entityName + "\" not found");
         }
 
+        public static List<String> getNameList() {
+            List<String> nameList = new ArrayList<>();
+
+            for (EntityTypes entityType : EntityTypes.values()) {
+                nameList.add(entityType.entityName);
+            }
+
+            nameList.add("random");
+
+            return nameList;
+        }
+
         private static int generateRandomInt(int minRange, int maxRange) {
             return ThreadLocalRandom.current().nextInt(minRange, maxRange);
         }
+
+        public static boolean contains(String search) {
+            try {
+                getEntityClass(search);
+                return true;
+            }
+            catch (Exception e) { // while i disagree with developing to exceptions, the user will get feedback and should not spam this
+                return false;
+            }
+        }
     }
 
-    public static Entity spawnEntityFromText(String entityName, String tagText, Player player) throws Exception {
+    public static Entity spawnEntityAtPlayerLocation(String entityType, String tagText, Player player) throws Exception {
         World world = player.getWorld();
         Location location = Bukkit.getEntity(player.getUniqueId()).getLocation();
-        Class entityClass = EntityTypes.getEntityClass(entityName);
+        Class entityClass = EntityTypes.getEntityClass(entityType);
         Entity entity = world.spawn(location, entityClass);
         entity.setCustomName(tagText);
         entity.setCustomNameVisible(true);
@@ -78,68 +107,50 @@ public class MinecraftUtil {
         return entity;
     }
 
-    private static int generateRandomInt(int minRange, int maxRange) {
-        return ThreadLocalRandom.current().nextInt(minRange, maxRange);
+    public static Entity spawnEntityNextToSign(String entityType, String tagText, Sign sign) throws Exception {
+        World world = sign.getWorld();
+        Class entityClass = EntityTypes.getEntityClass(entityType);
+
+        Location location = sign.getLocation();
+        location.setZ(location.getBlockZ() + 1);
+        location.setX(location.getBlockX() + 1);
+
+        Entity entity = world.spawn(sign.getLocation(), entityClass);
+        entity.setCustomName(tagText);
+        entity.setCustomNameVisible(true);
+
+        return entity;
     }
 
-    public static Block spawnBlockWherePlayerLooking(Player player) {
-        final int maxRange = 100;
+    public static Sign spawnSignWherePlayerLooking(Player player, String[] signText) {
+        final int maxRange = 3;
         World world = player.getWorld();
 
+        // calculate the next-highest block above target block so we can spawn a sign there
         Block targetBlock = player.getTargetBlock(null, maxRange);
         Block highestBlock = world.getHighestBlockAt(targetBlock.getX(), targetBlock.getZ());
-        highestBlock.setType(Material.DIRT);
 
-        return highestBlock;
-    }
+        // set the block facing the player
+        BlockFace oppositeFace = player.getFacing().getOppositeFace();
+        BlockData signBlockData = highestBlock.getBlockData();
 
-    public static Block spawnSignWherePlayerLooking(Player player) {
-        final int maxRange = 100;
-        World world = player.getWorld();
+        if (signBlockData instanceof Directional) {
+            Directional directional = (Directional) signBlockData;
+            directional.setFacing(oppositeFace);
+        }
 
-        Block targetBlock = player.getTargetBlock(null, maxRange);
-        Block highestBlock = world.getHighestBlockAt(targetBlock.getX(), targetBlock.getZ());
+        // turn block into sign and set text
         highestBlock.setType(Material.OAK_SIGN);
-
         Sign sign = (Sign) highestBlock.getState();
-        sign.setLine(0, "test");
+
+        if (signText.length > 0) {
+            for (int i = 0; i < signText.length && i < 4; i++) {
+                sign.setLine(i, signText[i]);
+            }
+        }
 
         sign.update();
 
-        return highestBlock;
-    }
-
-    public static BlockFace getPlayerDirection(Player player) {
-        BlockFace dir = null;
-
-        float y = player.getLocation().getYaw();
-
-        if( y < 0 ) {
-            y += 360;
-        }
-
-        y %= 360;
-
-        int i = (int)((y+8) / 22.5);
-
-        if (i == 0) {dir = BlockFace.WEST;}
-        else if (i == 1) { dir = BlockFace.WEST_NORTH_WEST;}
-        else if (i == 2) { dir = BlockFace.NORTH_WEST;}
-        else if (i == 3) { dir = BlockFace.NORTH_NORTH_WEST;}
-        else if (i == 4) { dir = BlockFace.NORTH;}
-        else if (i == 5) { dir = BlockFace.NORTH_NORTH_EAST;}
-        else if (i == 6) { dir = BlockFace.NORTH_EAST;}
-        else if (i == 7) { dir = BlockFace.EAST_NORTH_EAST;}
-        else if (i == 8) { dir = BlockFace.EAST;}
-        else if (i == 9) { dir = BlockFace.EAST_SOUTH_EAST;}
-        else if (i == 10 ){ dir = BlockFace.SOUTH_EAST;}
-        else if (i == 11 ){ dir = BlockFace.SOUTH_SOUTH_EAST;}
-        else if (i == 12 ){ dir = BlockFace.SOUTH;}
-        else if (i == 13 ){ dir = BlockFace.SOUTH_SOUTH_WEST;}
-        else if (i == 14 ){ dir = BlockFace.SOUTH_WEST;}
-        else if (i == 15 ){ dir = BlockFace.WEST_SOUTH_WEST;}
-        else {dir = BlockFace.WEST;}
-
-        return dir;
+        return sign;
     }
 }

@@ -6,6 +6,7 @@ import com.jaguth.spigotpluggin.awsmgr.AwsMgr;
 import com.jaguth.spigotpluggin.awsmgr.AwsMgrPluggin;
 import com.jaguth.spigotpluggin.awsmgr.domain.AwsAvatar;
 import org.bukkit.entity.Animals;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -140,5 +141,40 @@ public class AwsMgrTests {
         assertTrue(string1 == string2);
 
         System.out.println(string1 == string2);
+    }
+
+    @Test
+    public void listToSignTextTest1() {
+        List<String> inputList = new ArrayList<>();
+        inputList.add("first line");
+        inputList.add("second line");
+        inputList.add("third line");
+        inputList.add("last line");
+        inputList.add("this line won't be output since a sign holds a maximum of 4 lines");
+
+        String[] outputArray = AwsMgr.listToSignText(inputList);
+        int expectedLineCount = 4;
+
+        Assert.assertEquals(expectedLineCount, outputArray.length);
+        Assert.assertEquals("first line", outputArray[0]);
+        Assert.assertEquals("second line", outputArray[1]);
+        Assert.assertEquals("third line", outputArray[2]);
+        Assert.assertEquals("last line", outputArray[3]);
+    }
+
+    @Test
+    public void listToSignTextTest2() {
+        List<String> inputList = new ArrayList<>();
+        inputList.add("first line");
+        inputList.add("second line");
+        inputList.add("third line");
+
+        String[] outputArray = AwsMgr.listToSignText(inputList);
+        int expectedLineCount = 3;
+
+        Assert.assertEquals(expectedLineCount, outputArray.length);
+        Assert.assertEquals("first line", outputArray[0]);
+        Assert.assertEquals("second line", outputArray[1]);
+        Assert.assertEquals("third line", outputArray[2]);
     }
 }

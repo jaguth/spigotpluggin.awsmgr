@@ -1,6 +1,7 @@
 package com.jaguth.spigotpluggin.awsmgr.executors;
 
 import com.jaguth.spigotpluggin.awsmgr.AwsMgr;
+import com.jaguth.spigotpluggin.awsmgr.MinecraftUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -47,13 +48,20 @@ public class EC2CommandExecutor implements CommandExecutor {
         String ec2NameFilter = args[1];
         String entityType = args[2];
 
+        if (!MinecraftUtil.EntityTypes.contains(entityType)) {
+            sender.sendMessage("Entity \"" + entityType + "\" not found. Supported entities:");
+            String listOfSupportedEntities = String.join(",", MinecraftUtil.EntityTypes.getNameList());
+            sender.sendMessage(listOfSupportedEntities);
+            return false;
+        }
+
         try {
+
             Bukkit.broadcastMessage(sender.getName() + " is fetching " + ec2NameFilter);
             awsMgr.fetchEC2AndSpawnAwsAvatars(sender.getName(), ec2NameFilter, entityType);
         }
         catch (Exception e) {
-            sender.sendMessage("Failed to fetch EC2 instances: " + e.toString());
-            System.out.println("Failed to fetch EC2 instances: " + System.lineSeparator() + ExceptionUtils.getStackTrace(e));
+            sender.sendMessage("Failed to fetch EC2 instances: " + e.toString() + "\n" + ExceptionUtils.getStackTrace(e));
             return false;
         }
 

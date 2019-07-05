@@ -5,6 +5,7 @@ import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.InstanceState;
 import com.google.common.collect.Lists;
 import com.jaguth.spigotpluggin.awsmgr.AwsUtil;
+import com.jaguth.spigotpluggin.awsmgr.domain.GroupInfo;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -46,8 +47,8 @@ public class AwsUtilTests {
 
     @Test
     public void testGetInstances() {
-        HashMap<String, String> instanceGroups = new HashMap<>();
-        instanceGroups.put("sociallinks", "cow");
+        HashMap<String, GroupInfo> instanceGroups = new HashMap<>();
+        instanceGroups.put("sociallinks", new GroupInfo("cow", null));
         List<Instance> instances = AwsUtil.getEC2Instances(instanceGroups, "us-west-2");
         Assert.assertTrue(instances.size() > 0);
     }
