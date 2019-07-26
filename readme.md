@@ -48,16 +48,30 @@ This changes the region to fetch from. This will also clear all avatars from the
 
 #### Supported Animal Entities
 The following animal entities are currently supported for EC2. Other animal entities may be added in the future (like fish if you wanted to make some kind of EC2 aquarium).
+- Bat
+- Cat
 - Chicken
+- Cod
 - Cow
 - Donkey
+- Dolphin
+- Fish
+- Fox
 - Horse
 - Llama
+- Mule
 - Ocelot
+- Panda
 - Parrot
+- Pig
 - PolarBear
+- PufferFish
 - Rabbit
+- Salmon
+- SilverFish
 - Sheep
+- Squid
+- TropicalFish
 - Turtle
 - Wolf
 
